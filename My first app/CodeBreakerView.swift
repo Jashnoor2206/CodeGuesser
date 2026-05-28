@@ -20,15 +20,20 @@ struct CodeBreakerView: View {
                     index in CodeView(for: game.attempts[index])
                 }
             }
-            Button("Guess"){
-                game.attemptGuess()
-            }
         }.padding()
     }
+        
+        var guessButton: some View{
+            Button("Guess"){
+                game.attemptGuess()
+            }.font(.system(size: 80))
+             .minimumScaleFactor(0.1)
+        }
     func CodeView(for code: Code) -> some View{
             HStack{
                 ForEach(code.pegs.indices, id: \.self){ index in
                     RoundedRectangle(cornerRadius: 10)
+                        .contentShape(Rectangle())
                         .aspectRatio(0.75, contentMode: .fit)
                         .foregroundStyle(code.pegs[index])
                         .onTapGesture {
@@ -37,7 +42,12 @@ struct CodeBreakerView: View {
                             }
                         }
                 }
-                Pins(matches: [.exact, .inexact, .nomatch, .exact]) // this is from other file
+                Pins(matches: code.matches) // this is from other file
+                    .overlay{
+                        if code.kind == .guess{
+                            guessButton
+                        }
+                    }
             }
         }
 }
