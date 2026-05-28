@@ -15,6 +15,11 @@ struct CodeBreaker{
     var attempts: [Code] = [] // create an empty array for time being 
     let pegChoices: [Peg] = [.red, .blue, .green, .yellow]
     
+    mutating func attemptGuess(){
+        var attempt = guess
+        attempt.kind = .attempts
+        attempts.append(attempt)
+    }
     mutating func ChangeGuessPeg(at index: Int){
         let existingPeg = guess.pegs[index]
         if let indexofExistingPegInPegChoices = pegChoices.firstIndex(of: existingPeg){

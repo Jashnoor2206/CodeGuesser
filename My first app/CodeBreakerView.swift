@@ -15,7 +15,12 @@ struct CodeBreakerView: View {
         VStack{ // now for the vstack we will have a mastercode and a guess code
             CodeView(for: game.MasterCode) // master Code
             CodeView(for: game.guess) // guess code
-//            pegs(colors: game.attempts[0].pegs) // attempts
+            ForEach(game.attempts.indices, id: \.self){
+                index in CodeView(for: game.attempts[index])
+            }
+            Button("Guess"){
+                game.attemptGuess()
+            }
         }.padding()
     }
     func CodeView(for code: Code) -> some View{
