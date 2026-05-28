@@ -14,9 +14,11 @@ struct CodeBreakerView: View {
     var body: some View {
         VStack{ // now for the vstack we will have a mastercode and a guess code
             CodeView(for: game.MasterCode) // master Code
-            CodeView(for: game.guess) // guess code
-            ForEach(game.attempts.indices, id: \.self){
-                index in CodeView(for: game.attempts[index])
+            ScrollView{
+                CodeView(for: game.guess) // guess code
+                ForEach(game.attempts.indices.reversed(), id: \.self){
+                    index in CodeView(for: game.attempts[index])
+                }
             }
             Button("Guess"){
                 game.attemptGuess()

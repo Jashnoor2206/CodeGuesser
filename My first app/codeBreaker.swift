@@ -30,9 +30,7 @@ struct CodeBreaker{
             guess.pegs[index] = pegChoices.first ?? Code.missing
             
         }
-        
     }
-    
 }
 
 struct Code{ // inside the code we have pegs of different color
@@ -44,5 +42,26 @@ struct Code{ // inside the code we have pegs of different color
         case guess
         case attempts
         case unknown
+    }
+    
+    func match(against otherCode: Code) -> [Match]{
+        var results: [Match] = Array(repeating: .nomatch, count: pegs.count)
+        var pegstoMatch = otherCode.pegs
+        for index in pegs.indices.reversed(){
+            if pegstoMatch.count > index, pegstoMatch[index] == pegs[index]{
+                results[index] = .exact
+                pegstoMatch.remove(at: index)
+            }
+        }
+        
+        for index in pegs.indices{
+            if results[index] != .exact {
+                if let matchIndex = pegstoMatch.firstIndex(of: pegs[index]){
+                    results[index] = .inexact
+                    pegstoMatch.remove(at: matchIndex)
+                }
+            }
+        }
+        return results
     }
 }
