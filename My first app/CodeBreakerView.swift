@@ -10,25 +10,29 @@
 import SwiftUI
 
 struct CodeBreakerView: View {
-    let game: CodeBreaker = CodeBreaker()
+    @State var game = CodeBreaker()
     var body: some View {
-        VStack{
-            pegs(colors: [.red, .green, .blue, .purple])
-            pegs(colors: [.red, .green, .blue, .purple])
-            pegs(colors: [.red, .green, .blue, .purple])
-            pegs(colors: [.red, .green, .blue, .purple])
+        VStack{ // now for the vstack we will have a mastercode and a guess code
+            CodeView(for: game.MasterCode) // master Code
+            CodeView(for: game.guess) // guess code
+//            pegs(colors: game.attempts[0].pegs) // attempts
         }.padding()
     }
-    func pegs(colors : Array<Color>) -> some View{
-        HStack{
-            ForEach(colors.indices, id: \.self){ index in
-                RoundedRectangle(cornerRadius: 10)
-                    .aspectRatio(0.75, contentMode: .fit)
-                    .foregroundStyle(colors[index])
+    func CodeView(for code: Code) -> some View{
+            HStack{
+                ForEach(code.pegs.indices, id: \.self){ index in
+                    RoundedRectangle(cornerRadius: 10)
+                        .aspectRatio(0.75, contentMode: .fit)
+                        .foregroundStyle(code.pegs[index])
+                        .onTapGesture {
+                            if(code.kind == .guess){
+                                game.ChangeGuessPeg(at: index )
+                            }
+                        }
+                }
+                Pins(matches: [.exact, .inexact, .nomatch, .exact]) // this is from other file
             }
-            Pins(matches: [.exact, .inexact, .nomatch, .exact]) // this is from other file 
         }
-    }
 }
 
 #Preview {
