@@ -17,6 +17,8 @@ struct CodeBreaker{
     
     init(){
         MasterCode.randomize(from: pegChoices)
+        guess.pegs = Array(repeating: Color.white, count: 4)
+        
         print(MasterCode)
     }
     
@@ -55,10 +57,10 @@ struct Code{ // inside the code we have pegs of different color
         }
     }
     
-    var matches: [Match]{
+    var matches: [Match]?{
         switch kind{
         case .attempts(let matches): return matches
-        default: return []
+        default: return nil
         }
     }
     

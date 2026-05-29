@@ -33,21 +33,24 @@ struct CodeBreakerView: View {
             HStack{
                 ForEach(code.pegs.indices, id: \.self){ index in
                     RoundedRectangle(cornerRadius: 10)
+                        .fill(code.pegs[index])
+                        .strokeBorder(Color.primary)
                         .contentShape(Rectangle())
                         .aspectRatio(0.75, contentMode: .fit)
-                        .foregroundStyle(code.pegs[index])
                         .onTapGesture {
                             if(code.kind == .guess){
                                 game.ChangeGuessPeg(at: index )
                             }
                         }
                 }
-                Pins(matches: code.matches) // this is from other file
-                    .overlay{
-                        if code.kind == .guess{
-                            guessButton
+                if let match = code.matches{
+                    Pins(matches: match) // this is from other file
+                        .overlay{
+                            if code.kind == .guess{
+                                guessButton
+                            }
                         }
-                    }
+                }
             }
         }
 }
