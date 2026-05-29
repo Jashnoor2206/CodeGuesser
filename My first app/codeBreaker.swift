@@ -33,7 +33,7 @@ struct CodeBreaker{
             guess.pegs[index] = newPeg
         }
         else{
-            guess.pegs[index] = pegChoices.first ?? Code.missing
+            guess.pegs[index] = pegChoices.first ?? Code.missingPeg
             
         }
     }
@@ -41,8 +41,8 @@ struct CodeBreaker{
 
 struct Code{ // inside the code we have pegs of different color
     var kind: Kind
-    var pegs: [Peg] = Array(repeating: Code.missing, count: 4) // this will make intial guesser transparent 
-    static var missing: Peg = .clear
+    var pegs: [Peg] = Array(repeating: Code.missingPeg, count: 4) // this will make intial guesser transparent 
+    static var missingPeg: Peg = .clear
     enum Kind: Equatable{
         case masterCode
         case guess
@@ -52,7 +52,7 @@ struct Code{ // inside the code we have pegs of different color
     
     mutating func randomize(from PegChoices: [Peg]){
         for index in PegChoices.indices{
-            pegs[index] = PegChoices.randomElement() ?? Code.missing
+            pegs[index] = PegChoices.randomElement() ?? Code.missingPeg
         }
     }
     
