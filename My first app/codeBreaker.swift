@@ -17,8 +17,7 @@ struct CodeBreaker{
     
     init(){
         MasterCode.randomize(from: pegChoices)
-        guess.pegs = Array(repeating: Color.white, count: 4)
-        
+        guess.pegs = Array(repeating: Color.clear, count: 4)
         print(MasterCode)
     }
     
