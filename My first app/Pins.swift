@@ -39,5 +39,5 @@ struct Pins: View{
 }
 
 #Preview {
-    Pins(matches: [.exact, .inexact, .nomatch])
+    Pins(matches: [.exact, .inexact, .nomatch, .exact])
 }
