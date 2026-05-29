@@ -64,23 +64,24 @@ struct Code{ // inside the code we have pegs of different color
     }
     
     func match(against otherCode: Code) -> [Match]{
-        var results: [Match] = Array(repeating: .nomatch, count: pegs.count)
         var pegstoMatch = otherCode.pegs
-        for index in pegs.indices.reversed(){
+        var backward_exactMatches = pegstoMatch.indices.reversed().map{ index in
             if pegstoMatch.count > index, pegstoMatch[index] == pegs[index]{
-                results[index] = .exact
                 pegstoMatch.remove(at: index)
+                return Match.exact
             }
+            else { return .nomatch }
         }
+        let exactMatches = Array(backward_exactMatches.reversed())
         
-        for index in pegs.indices{
-            if results[index] != .exact {
-                if let matchIndex = pegstoMatch.firstIndex(of: pegs[index]){
-                    results[index] = .inexact
-                    pegstoMatch.remove(at: matchIndex)
-                }
+        return pegs.indices.map{ index in
+            if exactMatches[index] != .exact ,let matchIndex = pegstoMatch.firstIndex(of: pegs[index]){
+                pegstoMatch.remove(at: matchIndex)
+                return .inexact
+            }
+            else{
+                return exactMatches[index]
             }
         }
-        return results
     }
 }
