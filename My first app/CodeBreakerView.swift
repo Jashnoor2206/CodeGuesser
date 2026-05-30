@@ -10,7 +10,10 @@
 import SwiftUI
 
 struct CodeBreakerView: View {
+    // MARK: Data owned by me
     @State var game = CodeBreaker()
+    
+    // MARK: -  Body
     var body: some View {
         VStack{ // now for the vstack we will have a mastercode and a guess code
             CodeView(for: game.MasterCode) // master Code
@@ -32,11 +35,7 @@ struct CodeBreakerView: View {
     func CodeView(for code: Code) -> some View{
         HStack{
             ForEach(code.pegs.indices, id: \.self){ index in
-                RoundedRectangle(cornerRadius: 10)
-                    .fill(code.pegs[index])
-                    .strokeBorder(Color.primary)
-                    .contentShape(Rectangle())
-                    .aspectRatio(0.75, contentMode: .fit)
+                PegView(peg: code.pegs[index])
                     .onTapGesture {
                         if(code.kind == .guess){
                             game.ChangeGuessPeg(at: index )

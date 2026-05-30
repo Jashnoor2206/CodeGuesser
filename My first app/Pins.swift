@@ -12,8 +12,10 @@ enum Match {
     case inexact
 }
 struct Pins: View{
+    // MARK: Data In
     var matches : [Match]
     
+    // MARK: - Body
     var body : some View{
         HStack{
             VStack{
