@@ -26,17 +26,12 @@ struct CodeBreaker{
         attempt.kind = .attempts(guess.match(against: MasterCode))
         attempts.append(attempt)
     }
-    mutating func ChangeGuessPeg(at index: Int){
-        let existingPeg = guess.pegs[index]
-        if let indexofExistingPegInPegChoices = pegChoices.firstIndex(of: existingPeg){
-            let newPeg = pegChoices[(indexofExistingPegInPegChoices + 1) % pegChoices.count]
-            guess.pegs[index] = newPeg
-        }
-        else{
-            guess.pegs[index] = pegChoices.first ?? Code.missingPeg
-            
-        }
+    
+    mutating func setGuesspeg(_ peg : Peg, at index: Int){
+        guard guess.pegs.indices.contains(index) else {return} // this makes sure that index is always in bounds of indices 
+        guess.pegs[index] = peg
     }
+    
 }
 
 

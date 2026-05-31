@@ -11,7 +11,8 @@ import SwiftUI
 
 struct CodeBreakerView: View {
     // MARK: Data owned by me
-    @State var game = CodeBreaker()
+    @State private var game = CodeBreaker()
+    @State private var selection: Int = 0
     
     // MARK: -  Body
     var body: some View {
@@ -23,7 +24,18 @@ struct CodeBreakerView: View {
                     index in CodeView(for: game.attempts[index])
                 }
             }
+            pegChooser
         }.padding()
+    }
+    
+    var pegChooser: some View{
+        HStack{
+            ForEach(game.pegChoices, id: \.self){ peg in
+                Button{
+                    game.setGuesspeg(peg, at: selection)
+                }label: { PegView(peg: peg) }
+            }
+        }
     }
         
         var guessButton: some View{
@@ -36,9 +48,16 @@ struct CodeBreakerView: View {
         HStack{
             ForEach(code.pegs.indices, id: \.self){ index in
                 PegView(peg: code.pegs[index])
+                    .padding(5)
+                    .background{
+                        if selection == index, code.kind == .guess{
+                            RoundedRectangle(cornerRadius: 10)
+                                .foregroundStyle(Color.gray.opacity(0.2))
+                        }
+                    }
                     .onTapGesture {
                         if(code.kind == .guess){
-                            game.ChangeGuessPeg(at: index )
+                            selection = index
                         }
                     }
                 }
