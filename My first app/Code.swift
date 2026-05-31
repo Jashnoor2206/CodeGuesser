@@ -13,18 +13,26 @@ struct Code{ // inside the code we have pegs of different color
     var pegs: [Peg] = Array(repeating: Code.missingPeg, count: 4) // this will make intial guesser transparent 
     static var missingPeg: Peg = .clear
     enum Kind: Equatable{
-        case masterCode
+        case masterCode (isHidden: Bool)
         case guess
         case attempts ([Match])
         case unknown
     }
     
     mutating func randomize(from PegChoices: [Peg]){
-        for index in PegChoices.indices{
+        for index in pegs.indices{
             pegs[index] = PegChoices.randomElement() ?? Code.missingPeg
         }
     }
     
+    var isHidden: Bool{
+        switch kind{
+        case .masterCode(let isHidden):
+            return isHidden
+        default:
+            return false
+        }
+    }
     var matches: [Match]?{
         switch kind{
         case .attempts(let matches): return matches

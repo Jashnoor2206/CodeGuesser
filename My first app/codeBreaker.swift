@@ -10,21 +10,26 @@ import SwiftUI
 typealias Peg = Color // here essentially we make Peg an alias of color because for now pegs are just the colors , but since Color is the UI thing so we need to import swiftUI instead of Foundation
 
 struct CodeBreaker{
-    var MasterCode: Code = Code(kind: .masterCode)
+    var MasterCode: Code = Code(kind: .masterCode(isHidden: true))
     var guess: Code = Code(kind: .guess)
     var attempts: [Code] = [] // create an empty array for time being 
-    let pegChoices: [Peg] = [.red, .blue, .green, .yellow]
+    let pegChoices: [Peg] = [.red, .blue, .green, .yellow, .brown]
     
     init(){
         MasterCode.randomize(from: pegChoices)
         guess.pegs = Array(repeating: Color.clear, count: 4)
         print(MasterCode)
     }
-    
+    var isOver: Bool{
+        attempts.last?.pegs == MasterCode.pegs
+    }
     mutating func attemptGuess(){
         var attempt = guess
         attempt.kind = .attempts(guess.match(against: MasterCode))
         attempts.append(attempt)
+        if isOver{
+            MasterCode.kind = .masterCode(isHidden: false)
+        }
     }
     
     mutating func setGuesspeg(_ peg : Peg, at index: Int){

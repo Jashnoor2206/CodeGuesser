@@ -17,11 +17,13 @@ struct CodeBreakerView: View {
     // MARK: -  Body
     var body: some View {
         VStack{ // now for the vstack we will have a mastercode and a guess code
-            CodeView(for: game.MasterCode) // master Code
+            View(for: game.MasterCode) // master Code
             ScrollView{
-                CodeView(for: game.guess) // guess code
+                if !game.isOver{
+                    View(for: game.guess) // guess code
+                }
                 ForEach(game.attempts.indices.reversed(), id: \.self){
-                    index in CodeView(for: game.attempts[index])
+                    index in View(for: game.attempts[index])
                 }
             }
             pegChooser
@@ -33,6 +35,7 @@ struct CodeBreakerView: View {
             ForEach(game.pegChoices, id: \.self){ peg in
                 Button{
                     game.setGuesspeg(peg, at: selection)
+                    selection = (selection + 1) % game.MasterCode.pegs.count
                 }label: { PegView(peg: peg) }
             }
         }
@@ -41,26 +44,13 @@ struct CodeBreakerView: View {
         var guessButton: some View{
             Button("Guess"){
                 game.attemptGuess()
+                selection = 0
             }.font(.system(size: 80))
              .minimumScaleFactor(0.1)
         }
-    func CodeView(for code: Code) -> some View{
+    func View(for code: Code) -> some View{
         HStack{
-            ForEach(code.pegs.indices, id: \.self){ index in
-                PegView(peg: code.pegs[index])
-                    .padding(5)
-                    .background{
-                        if selection == index, code.kind == .guess{
-                            RoundedRectangle(cornerRadius: 10)
-                                .foregroundStyle(Color.gray.opacity(0.2))
-                        }
-                    }
-                    .onTapGesture {
-                        if(code.kind == .guess){
-                            selection = index
-                        }
-                    }
-                }
+            CodeView(code: code, selection: $selection)
             Rectangle()
                 .fill(Color.clear)
                 .aspectRatio(0.75, contentMode: .fit)
