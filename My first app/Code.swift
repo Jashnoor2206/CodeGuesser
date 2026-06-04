@@ -23,6 +23,8 @@ struct Code{ // inside the code we have pegs of different color
         for index in pegs.indices{
             pegs[index] = PegChoices.randomElement() ?? Code.missingPeg
         }
+        print(pegs)
+
     }
     
     var isHidden: Bool{

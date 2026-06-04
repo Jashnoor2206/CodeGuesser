@@ -18,7 +18,6 @@ struct CodeBreaker{
     init(){
         MasterCode.randomize(from: pegChoices)
         guess.pegs = Array(repeating: Color.clear, count: 4)
-        print(MasterCode)
     }
     var isOver: Bool{
         attempts.last?.pegs == MasterCode.pegs
@@ -35,6 +34,13 @@ struct CodeBreaker{
     mutating func setGuesspeg(_ peg : Peg, at index: Int){
         guard guess.pegs.indices.contains(index) else {return} // this makes sure that index is always in bounds of indices 
         guess.pegs[index] = peg
+    }
+    
+    mutating func restart(){
+        MasterCode.kind = .masterCode(isHidden: true)
+        guess.pegs = Array(repeating: Color.clear, count: 4)
+        attempts.removeAll()
+        MasterCode.randomize(from: pegChoices)
     }
     
 }

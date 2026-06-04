@@ -17,7 +17,7 @@ struct CodeBreakerView: View {
     // MARK: -  Body
     var body: some View {
         VStack{ // now for the vstack we will have a mastercode and a guess code
-            CodeView(code: game.MasterCode)// master Code
+            CodeView(code: game.MasterCode){restartButton}// master Code
             ScrollView{
                 if !game.isOver{
                     CodeView(code: game.guess, selection: $selection){guessButton} // guess code
@@ -47,9 +47,19 @@ struct CodeBreakerView: View {
     
     var guessButton: some View{
         Button("Guess"){
-            game.attemptGuess()
+            withAnimation(Animation.linear(duration: 3)){
+                game.attemptGuess()
+                selection = 0
+                game.guess.pegs = Array(repeating: Color.clear, count: 4)
+            }
+        }.font(.system(size: 80))
+            .minimumScaleFactor(0.1)
+    }
+    
+    var restartButton: some View{
+        Button("Restart"){
+            game.restart()
             selection = 0
-            game.guess.pegs = Array(repeating: Color.clear, count: 4)
         }.font(.system(size: 80))
             .minimumScaleFactor(0.1)
     }
