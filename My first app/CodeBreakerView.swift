@@ -17,20 +17,20 @@ struct CodeBreakerView: View {
     // MARK: -  Body
     var body: some View {
         VStack{ // now for the vstack we will have a mastercode and a guess code
-            View(for: game.MasterCode) // master Code
+            CodeView(code: game.MasterCode, selection: $selection) // master Code
             ScrollView{
                 if !game.isOver{
-                    View(for: game.guess) // guess code
+                    CodeView(code: game.guess, selection: $selection)  // guess code
                 }
                 ForEach(game.attempts.indices.reversed(), id: \.self){
-                    index in View(for: game.attempts[index])
+                    index in CodeView(code: game.attempts[index], selection: $selection)
                 }
             }
             pegChooser
         }.padding()
     }
     
-    var pegChooser: some View{
+    var pegChooser: some View{ // Bottom choices that are displayed
         HStack{
             ForEach(game.pegChoices, id: \.self){ peg in
                 Button{
@@ -40,31 +40,14 @@ struct CodeBreakerView: View {
             }
         }
     }
-        
-        var guessButton: some View{
-            Button("Guess"){
-                game.attemptGuess()
-                selection = 0
-            }.font(.system(size: 80))
-             .minimumScaleFactor(0.1)
-        }
-    func View(for code: Code) -> some View{
-        HStack{
-            CodeView(code: code, selection: $selection)
-            Rectangle()
-                .fill(Color.clear)
-                .aspectRatio(0.75, contentMode: .fit)
-                .overlay{
-                    if let match = code.matches{
-                        Pins(matches: match) // this is from other file
-                    }
-                    else{
-                        if code.kind == .guess{
-                            guessButton
-                    }
-                }
-            }
-        }
+    
+    var guessButton: some View{
+        Button("Guess"){
+            game.attemptGuess()
+            selection = 0
+            game.guess.pegs = Array(repeating: Color.clear, count: 4)
+        }.font(.system(size: 80))
+            .minimumScaleFactor(0.1)
     }
 }
 

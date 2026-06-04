@@ -17,7 +17,6 @@ struct PegView: View {
     var body: some View {
         pegShape
             .fill(peg)
-            .strokeBorder(Color.primary)
             .contentShape(Rectangle())
             .aspectRatio(0.75, contentMode: .fit)
     }
