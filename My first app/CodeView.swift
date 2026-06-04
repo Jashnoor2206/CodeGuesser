@@ -7,11 +7,21 @@
 
 import SwiftUI
 
-struct CodeView: View {
+struct CodeView<SideView>: View where SideView: View {
     // MARK: Data in
     let code: Code
     // MARK: Binding Variable
     @Binding var selection: Int
+    @ViewBuilder let sideView: () -> SideView
+    
+    init(code: Code,
+         selection: Binding<Int> = .constant(-1),
+         @ViewBuilder sideView: @escaping () -> SideView = {EmptyView()}){
+        self.code = code
+        self._selection = selection
+        self.sideView = sideView
+    }
+    
     var body: some View {
         HStack{
             ForEach(code.pegs.indices, id: \.self){ index in
@@ -33,22 +43,15 @@ struct CodeView: View {
                         }
                     }
                 }
-//            Rectangle()
-//                .fill(Color.clear)
-//                .aspectRatio(0.75, contentMode: .fit)
-//                .overlay{
-//                    if let match = code.matches{
-//                        Pins(matches: match) // this is from other file
-//                    }
-//                    else{
-//                        if code.kind == .guess{
-//                            guessButton
-//                    }
-//                }
-//            }
+            Rectangle()
+                .fill(Color.clear)
+                .aspectRatio(0.75, contentMode: .fit)
+                .overlay{
+                    sideView()
+                }
+            }
         }
     }
-}
 
 //#Preview {
 //    CodeView(code)
