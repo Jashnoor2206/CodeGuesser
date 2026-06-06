@@ -47,7 +47,7 @@ struct CodeBreakerView: View {
     
     var guessButton: some View{
         Button("Guess"){
-            withAnimation(Animation.linear(duration: 3)){
+            withAnimation(.guess){
                 game.attemptGuess()
                 selection = 0
                 game.guess.pegs = Array(repeating: Color.clear, count: 4)
@@ -57,13 +57,21 @@ struct CodeBreakerView: View {
     }
     
     var restartButton: some View{
-        Button("Restart"){
-            game.restart()
-            selection = 0
+            Button("Restart"){
+                withAnimation(.restart){
+                    game.restart()
+                    selection = 0
+                }
         }.font(.system(size: 80))
             .minimumScaleFactor(0.1)
     }
 }
+
+extension Animation{
+    static let guess = easeInOut(duration: 1)
+    static let restart = linear(duration: 1)
+}
+
 
 #Preview {
     CodeBreakerView()

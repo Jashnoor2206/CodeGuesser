@@ -42,6 +42,11 @@ struct CodeView<SideView>: View where SideView: View {
                             selection = index
                         }
                     }
+                    .transaction{ transaction in
+                        if code.isHidden {
+                            transaction.animation = nil
+                        }
+                    }
                 }
             Rectangle()
                 .fill(Color.clear)
