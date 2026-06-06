@@ -14,6 +14,7 @@ struct CodeBreakerView: View {
     @State private var game = CodeBreaker()
     @State private var attemptsNumber: Int = 0
     @State private var selection: Int = 0
+//    @State private var restarting: Bool = false
     
     // MARK: -  Body
     var body: some View {
@@ -29,7 +30,7 @@ struct CodeBreakerView: View {
                             Pins(matches: matches)
                         }
                     }
-                }
+                }.transition(.attempts(game.isOver))
             }
             pegChooser
         }.padding()
@@ -61,14 +62,14 @@ struct CodeBreakerView: View {
     }
     
     var guessButton: some View{
-        Button("Guess"){
-            withAnimation(.guess){
-                game.attemptGuess()
-                selection = 0
-                game.guess.pegs = Array(repeating: Color.clear, count: 4)
-                attemptsNumber = attemptsNumber + 1
-            }
-        }.font(.system(size: 80))
+            Button("Guess"){
+                withAnimation(.guess){
+                    game.attemptGuess()
+                    selection = 0
+                    game.guess.pegs = Array(repeating: Color.clear, count: 4)
+                    attemptsNumber = attemptsNumber + 1
+                }
+            }.font(.system(size: 80))
             .minimumScaleFactor(0.1)
     }
     
@@ -86,6 +87,11 @@ struct CodeBreakerView: View {
 
 extension AnyTransition{
     static let pegchooser = offset(x: 0, y: 200)
+    static func attempts(_ isOver: Bool) -> AnyTransition{
+        AnyTransition.asymmetric(
+            insertion: !isOver ? .opacity : .move(edge: .top),
+            removal: .move(edge: .trailing))
+    }
 }
 extension Animation{
     static let guess = easeInOut(duration: 1)
