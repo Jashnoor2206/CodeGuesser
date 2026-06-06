@@ -12,6 +12,7 @@ import SwiftUI
 struct CodeBreakerView: View {
     // MARK: Data owned by me
     @State private var game = CodeBreaker()
+    @State private var attemptsNumber: Int = 0
     @State private var selection: Int = 0
     
     // MARK: -  Body
@@ -36,11 +37,25 @@ struct CodeBreakerView: View {
     
     var pegChooser: some View{ // Bottom choices that are displayed
         HStack{
-            ForEach(game.pegChoices, id: \.self){ peg in
-                Button{
-                    game.setGuesspeg(peg, at: selection)
-                    selection = (selection + 1) % game.MasterCode.pegs.count
-                }label: { PegView(peg: peg) }
+            if !game.isOver{
+                if attemptsNumber >= 5{
+                    Text("You have exhausted all your attempts")
+                        .font(.largeTitle)
+                        .animation(.guess, value: attemptsNumber)
+                }
+                else{
+                    ForEach(game.pegChoices, id: \.self){ peg in
+                        Button{
+                            game.setGuesspeg(peg, at: selection)
+                            selection = (selection + 1) % game.MasterCode.pegs.count
+                        }label: { PegView(peg: peg) }
+                    }.transition(.pegchooser)
+                }
+            }
+            else{
+                Text("Congrats you won the game !!")
+                    .font(.largeTitle)
+                    .animation(.guess)
             }
         }
     }
@@ -51,6 +66,7 @@ struct CodeBreakerView: View {
                 game.attemptGuess()
                 selection = 0
                 game.guess.pegs = Array(repeating: Color.clear, count: 4)
+                attemptsNumber = attemptsNumber + 1
             }
         }.font(.system(size: 80))
             .minimumScaleFactor(0.1)
@@ -61,12 +77,16 @@ struct CodeBreakerView: View {
                 withAnimation(.restart){
                     game.restart()
                     selection = 0
+                    attemptsNumber = 0
                 }
         }.font(.system(size: 80))
             .minimumScaleFactor(0.1)
     }
 }
 
+extension AnyTransition{
+    static let pegchooser = offset(x: 0, y: 200)
+}
 extension Animation{
     static let guess = easeInOut(duration: 1)
     static let restart = linear(duration: 1)
