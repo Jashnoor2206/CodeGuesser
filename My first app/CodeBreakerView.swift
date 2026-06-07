@@ -14,24 +14,24 @@ struct CodeBreakerView: View {
     @State private var game = CodeBreaker()
     @State private var attemptsNumber: Int = 0
     @State private var selection: Int = 0
-//    @State private var restarting: Bool = false
-    
+    @State private var restarting: Bool = false
     // MARK: -  Body
     var body: some View {
         VStack{ // now for the vstack we will have a mastercode and a guess code
             CodeView(code: game.MasterCode){restartButton}// master Code
             ScrollView{
-                if !game.isOver{
-                    CodeView(code: game.guess, selection: $selection){guessButton} // guess code
-                }
-                ForEach(game.attempts.indices.reversed(), id: \.self){ index in
-                     CodeView(code: game.attempts[index]){
-                        if let matches = game.attempts[index].matches{
-                            Pins(matches: matches)
-                        }
+                    if !game.isOver || restarting{
+                        CodeView(code: game.guess, selection: $selection){guessButton} // guess code
+                            .opacity(restarting ? 0 : 1)
                     }
-                }.transition(.attempts(game.isOver))
-            }
+                    ForEach(game.attempts.indices.reversed(), id: \.self){ index in
+                        CodeView(code: game.attempts[index]){
+                            if let matches = game.attempts[index].matches{
+                                Pins(matches: matches)
+                            }
+                        }
+                    }.transition(.attempts(game.isOver))
+                }
             pegChooser
         }.padding()
     }
@@ -76,10 +76,16 @@ struct CodeBreakerView: View {
     var restartButton: some View{
             Button("Restart"){
                 withAnimation(.restart){
-                    game.restart()
-                    selection = 0
-                    attemptsNumber = 0
+                    restarting = true
+                }completion: {
+                    withAnimation(.restart){
+                        game.restart()
+                        selection = 0
+                        attemptsNumber = 0
+                        restarting = false
+                    }
                 }
+
         }.font(.system(size: 80))
             .minimumScaleFactor(0.1)
     }
