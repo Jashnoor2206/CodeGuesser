@@ -13,6 +13,7 @@ struct CodeView<SideView>: View where SideView: View {
     // MARK: Binding Variable
     @Binding var selection: Int
     @ViewBuilder let sideView: () -> SideView
+    @Namespace private var selectionNamespace
     
     init(code: Code,
          selection: Binding<Int> = .constant(-1),
@@ -28,10 +29,13 @@ struct CodeView<SideView>: View where SideView: View {
                 PegView(peg: code.pegs[index])
                     .padding(5)
                     .background{
-                        if selection == index, code.kind == .guess{
-                            RoundedRectangle(cornerRadius: 10)
-                                .foregroundStyle(Color.gray.opacity(0.4))
-                        }
+                        Group{
+                            if selection == index, code.kind == .guess{
+                                RoundedRectangle(cornerRadius: 10)
+                                    .foregroundStyle(Color.gray.opacity(0.4))
+                                    .matchedGeometryEffect(id: "selection", in: selectionNamespace)
+                            }
+                        }.animation(.guess, value: selection)
                     }
                     .overlay{
                         RoundedRectangle(cornerRadius: 10)

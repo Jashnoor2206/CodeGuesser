@@ -76,8 +76,8 @@ extension AnyTransition{
     }
 }
 extension Animation{
-    static let guess = easeInOut(duration: 1)
-    static let restart = linear(duration: 1)
+    static let guess = Animation.default
+    static let restart = Animation.default
 }
 
 
