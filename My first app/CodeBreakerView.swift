@@ -15,6 +15,7 @@ struct CodeBreakerView: View {
     @State private var attemptsNumber: Int = 0
     @State private var selection: Int = 0
     @State private var restarting: Bool = false
+    
     // MARK: -  Body
     var body: some View {
         VStack{ // now for the vstack we will have a mastercode and a guess code
@@ -32,33 +33,8 @@ struct CodeBreakerView: View {
                         }
                     }.transition(.attempts(game.isOver))
                 }
-            pegChooser
+            Pegchooser(selection: $selection, game: $game, attemptsNumber: attemptsNumber)
         }.padding()
-    }
-    
-    var pegChooser: some View{ // Bottom choices that are displayed
-        HStack{
-            if !game.isOver{
-                if attemptsNumber >= 5{
-                    Text("You have exhausted all your attempts")
-                        .font(.largeTitle)
-                        .animation(.guess, value: attemptsNumber)
-                }
-                else{
-                    ForEach(game.pegChoices, id: \.self){ peg in
-                        Button{
-                            game.setGuesspeg(peg, at: selection)
-                            selection = (selection + 1) % game.MasterCode.pegs.count
-                        }label: { PegView(peg: peg) }
-                    }.transition(.pegchooser)
-                }
-            }
-            else{
-                Text("Congrats you won the game !!")
-                    .font(.largeTitle)
-                    .animation(.guess)
-            }
-        }
     }
     
     var guessButton: some View{
