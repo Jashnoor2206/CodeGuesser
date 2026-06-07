@@ -17,7 +17,6 @@ struct Pegchooser: View {
                 if attemptsNumber >= 5{
                     Text("You have exhausted all your attempts")
                         .font(.largeTitle)
-                        .animation(.guess, value: attemptsNumber)
                 }
                 else{
                     ForEach(game.pegChoices, id: \.self){ peg in
@@ -31,7 +30,6 @@ struct Pegchooser: View {
             else{
                 Text("Congrats you won the game !!")
                     .font(.largeTitle)
-                    .animation(.guess)
             }
         }
     }
