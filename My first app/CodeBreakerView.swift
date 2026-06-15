@@ -15,13 +15,14 @@ struct CodeBreakerView: View {
     @State private var attemptsNumber: Int = 0
     @State private var selection: Int = 0
     @State private var restarting: Bool = false
+    @State private var PinsHidden: Bool = false
     
     // MARK: -  Body
     var body: some View {
         VStack{ // now for the vstack we will have a mastercode and a guess code
             CodeView(code: game.MasterCode){restartButton}// master Code
             ScrollView{
-                    if !game.isOver || restarting{
+                    if !game.isOver{
                         CodeView(code: game.guess, selection: $selection){guessButton} // guess code
                             .opacity(restarting ? 0 : 1)
                     }
@@ -29,6 +30,7 @@ struct CodeBreakerView: View {
                         CodeView(code: game.attempts[index]){
                             if let matches = game.attempts[index].matches{
                                 Pins(matches: matches)
+                                    .opacity(game.attempts.last?.matches == game.attempts[index].matches && PinsHidden ? 0 : 1)
                             }
                         }
                     }.transition(.attempts(game.isOver))
@@ -38,28 +40,29 @@ struct CodeBreakerView: View {
     }
     
     var guessButton: some View{
-            Button("Guess"){
-                withAnimation(.guess){
-                    game.attemptGuess()
-                    selection = 0
-                    game.guess.pegs = Array(repeating: Color.clear, count: 4)
-                    attemptsNumber = attemptsNumber + 1
-                }
-            }.font(.system(size: 80))
-            .minimumScaleFactor(0.1)
+        Button("Guess"){
+            withAnimation(.guess){
+                PinsHidden = true
+                game.attemptGuess()
+                selection = 0
+                game.guess.pegs = Array(repeating: Color.clear, count: 4)
+                attemptsNumber = attemptsNumber + 1
+            }completion: {
+                withAnimation(.guess){ PinsHidden = false }
+            }
+        }.font(.system(size: 80))
+         .minimumScaleFactor(0.1)
     }
     
     var restartButton: some View{
             Button("Restart"){
                 withAnimation(.restart){
-                    restarting = true
+                    restarting = game.isOver
+                    game.restart()
+                    selection = 0
+                    attemptsNumber = 0
                 }completion: {
-                    withAnimation(.restart){
-                        game.restart()
-                        selection = 0
-                        attemptsNumber = 0
-                        restarting = false
-                    }
+                    withAnimation(.restart){ restarting = false }
                 }
 
         }.font(.system(size: 80))
@@ -71,7 +74,7 @@ extension AnyTransition{
     static let pegchooser = offset(x: 0, y: 200)
     static func attempts(_ isOver: Bool) -> AnyTransition{
         AnyTransition.asymmetric(
-            insertion: !isOver ? .opacity : .move(edge: .top),
+            insertion: .move(edge: .top),
             removal: .move(edge: .trailing))
     }
 }
