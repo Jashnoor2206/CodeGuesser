@@ -26,11 +26,11 @@ struct CodeBreakerView: View {
                         CodeView(code: game.guess, selection: $selection){guessButton} // guess code
                             .opacity(restarting ? 0 : 1)
                     }
-                    ForEach(game.attempts.indices.reversed(), id: \.self){ index in
-                        CodeView(code: game.attempts[index]){
-                            if let matches = game.attempts[index].matches{
+                    ForEach(game.attempts, id: \.pegs){ attempt in
+                        CodeView(code: attempt){
+                            if let matches = attempt.matches{
                                 Pins(matches: matches)
-                                    .opacity(game.attempts.last?.matches == game.attempts[index].matches && PinsHidden ? 0 : 1)
+                                    .opacity(game.attempts.first?.matches == attempt.matches && PinsHidden ? 0 : 1)
                             }
                         }
                     }.transition(.attempts(game.isOver))

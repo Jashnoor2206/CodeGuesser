@@ -20,12 +20,13 @@ struct CodeBreaker{
         guess.pegs = Array(repeating: Color.clear, count: 4)
     }
     var isOver: Bool{
-        attempts.last?.pegs == MasterCode.pegs
+        attempts.first?.pegs == MasterCode.pegs
     }
     mutating func attemptGuess(){
+        guard !attempts.contains(where: { $0.pegs == guess.pegs}) else {return}
         var attempt = guess
         attempt.kind = .attempts(guess.match(against: MasterCode))
-        attempts.append(attempt)
+        attempts.insert(attempt, at: 0) // insert element at the begining
         if isOver{
             MasterCode.kind = .masterCode(isHidden: false)
         }
