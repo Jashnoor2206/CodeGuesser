@@ -8,11 +8,11 @@
 
 import SwiftUI
 
-struct Code{ // inside the code we have pegs of different color
+struct Code: Hashable{ // inside the code we have pegs of different color
     var kind: Kind
     var pegs: [Peg] = Array(repeating: Code.missingPeg, count: 4) // this will make intial guesser transparent 
     static var missingPeg: Peg = .clear
-    enum Kind: Equatable{
+    enum Kind: Hashable{
         case masterCode (isHidden: Bool)
         case guess
         case attempts ([Match])

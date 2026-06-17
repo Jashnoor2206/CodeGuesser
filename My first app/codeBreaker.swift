@@ -9,7 +9,7 @@ import SwiftUI
 
 typealias Peg = Color // here essentially we make Peg an alias of color because for now pegs are just the colors , but since Color is the UI thing so we need to import swiftUI instead of Foundation
 
-struct CodeBreaker{
+@Observable class CodeBreaker {
     var name : String
     var MasterCode: Code = Code(kind: .masterCode(isHidden: true))
     var guess: Code = Code(kind: .guess)
@@ -24,7 +24,7 @@ struct CodeBreaker{
     var isOver: Bool{
         attempts.first?.pegs == MasterCode.pegs
     }
-    mutating func attemptGuess(){
+    func attemptGuess(){
         guard !attempts.contains(where: { $0.pegs == guess.pegs}) else {return}
         var attempt = guess
         attempt.kind = .attempts(guess.match(against: MasterCode))
@@ -34,18 +34,27 @@ struct CodeBreaker{
         }
     }
     
-    mutating func setGuesspeg(_ peg : Peg, at index: Int){
+    func setGuesspeg(_ peg : Peg, at index: Int){
         guard guess.pegs.indices.contains(index) else {return} // this makes sure that index is always in bounds of indices 
         guess.pegs[index] = peg
     }
     
-    mutating func restart(){
+    func restart(){
         MasterCode.kind = .masterCode(isHidden: true)
         guess.pegs = Array(repeating: Color.clear, count: 4)
         attempts.removeAll()
         MasterCode.randomize(from: pegChoices)
     }
     
+}
+
+extension CodeBreaker: Identifiable, Hashable{
+    static func == (lhs: CodeBreaker, rhs: CodeBreaker) -> Bool{
+        return lhs.id == rhs.id
+    }
+    func hash(into hasher: inout Hasher){
+        hasher.combine(id)
+    }
 }
 
 

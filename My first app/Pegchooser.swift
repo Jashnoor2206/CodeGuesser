@@ -9,7 +9,7 @@ import SwiftUI
 
 struct Pegchooser: View {
     @Binding var selection: Int
-    @Binding var game: CodeBreaker
+    let game: CodeBreaker
     let attemptsNumber: Int
     var body: some View {
         HStack{

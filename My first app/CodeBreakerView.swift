@@ -11,7 +11,7 @@ import SwiftUI
 
 struct CodeBreakerView: View {
     // MARK: Data shared to me
-    @Binding var game: CodeBreaker
+    let game: CodeBreaker
 
     // MARK: Data owned by me
     @State private var attemptsNumber: Int = 0
@@ -37,7 +37,7 @@ struct CodeBreakerView: View {
                         }
                     }.transition(.attempts(game.isOver))
                 }
-            Pegchooser(selection: $selection, game: $game, attemptsNumber: attemptsNumber)
+            Pegchooser(selection: $selection, game: game, attemptsNumber: attemptsNumber)
         }.padding()
     }
     
@@ -88,5 +88,5 @@ extension Animation{
 
 #Preview {
     @Previewable @State var game = CodeBreaker()
-    CodeBreakerView(game: $game)
+    CodeBreakerView(game: game)
 }
