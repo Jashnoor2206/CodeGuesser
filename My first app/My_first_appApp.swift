@@ -11,7 +11,7 @@ import SwiftUI
 struct My_first_appApp: App {
     var body: some Scene {
         WindowGroup {
-            CodeBreakerView()
+            GameChooser()
         }
     }
 }

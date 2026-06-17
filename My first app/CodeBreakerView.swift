@@ -10,8 +10,10 @@
 import SwiftUI
 
 struct CodeBreakerView: View {
+    // MARK: Data shared to me
+    @Binding var game: CodeBreaker
+
     // MARK: Data owned by me
-    @State private var game = CodeBreaker()
     @State private var attemptsNumber: Int = 0
     @State private var selection: Int = 0
     @State private var restarting: Bool = false
@@ -85,5 +87,6 @@ extension Animation{
 
 
 #Preview {
-    CodeBreakerView()
+    @Previewable @State var game = CodeBreaker()
+    CodeBreakerView(game: $game)
 }
