@@ -8,29 +8,22 @@
 import SwiftUI
 
 struct GameChooser: View {
-    @State private var games : [CodeBreaker] = []
+    @State private var selection: CodeBreaker? = nil
+    
     var body: some View {
-        NavigationStack{
-            List(games){ game in
-                NavigationLink(value: game ){
-                    VStack(alignment: .leading){
-                        Text(game.name).font(.title)
-                        Choices(game: game)
-                            .frame(maxHeight: 80)
-                        Text("^[\(game.attempts.count) attempt](inflect: true)")
-                            .font(.title3)
-                    }
-                }
-            }.listStyle(.automatic)
-                .navigationDestination(for: CodeBreaker.self){ game in
-                    CodeBreakerView(game: game)
-                }
+        NavigationSplitView{
+            GameList(selection: $selection)
+        } detail: {
+            if let selection {
+                CodeBreakerView(game: selection)
+                    .navigationTitle(selection.name)
+            }
+            else{
+                Text("Choose a Game !")
+                    .font(.title)
+            }
         }
-        .onAppear(){
-                games.append(CodeBreaker(name: "MasterMind", pegChoices : [.red, .blue, .green, .yellow]))
-                games.append(CodeBreaker(name: "Earth Tones", pegChoices : [.brown, .orange, .black, .yellow, .green]))
-                games.append(CodeBreaker(name: "Aqua Tones", pegChoices : [.blue, .cyan, .indigo]))
-        }
+        .navigationSplitViewStyle(.balanced)
     }
 }
 

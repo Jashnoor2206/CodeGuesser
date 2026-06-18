@@ -38,6 +38,7 @@ struct CodeBreakerView: View {
                     }.transition(.attempts(game.isOver))
                 }
             Pegchooser(selection: $selection, game: game, attemptsNumber: attemptsNumber)
+                .frame(maxHeight: 150)
         }.padding()
     }
     
