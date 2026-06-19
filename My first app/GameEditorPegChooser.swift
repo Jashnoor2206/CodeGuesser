@@ -33,9 +33,7 @@ struct GameEditorPegChooser: View {
                 }
             }
             Button{
-                withAnimation{
-                    pegChoices.append(.black)
-                }
+                withAnimation{ pegChoices.append(.black) }
             }label: {
                 HStack{
                     Text("Add choice ")

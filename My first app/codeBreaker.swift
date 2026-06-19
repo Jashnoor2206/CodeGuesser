@@ -15,7 +15,7 @@ typealias Peg = Color // here essentially we make Peg an alias of color because 
     var guess: Code = Code(kind: .guess)
     var attempts: [Code] = [] // create an empty array for time being 
     var pegChoices: [Peg] 
-    init(name: String = "Code Breaker", pegChoices : [Peg] = [.red, .blue, .brown, .yellow]){
+    init(name: String = "Untitled", pegChoices : [Peg] = [.red, .blue, .brown, .yellow]){
         self.name = name
         self.pegChoices = pegChoices
         MasterCode.randomize(from: pegChoices)
