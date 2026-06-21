@@ -9,6 +9,7 @@ import SwiftUI
 
 struct GameList: View {
     @State var games: [CodeBreaker] = []
+    @State private var showAlert: Bool = false
     @State private var showGameEditor: Bool = false
     @State var newGame : CodeBreaker?
     @Binding var selection: CodeBreaker?
@@ -35,24 +36,42 @@ struct GameList: View {
         }.toolbar{
             Button{ newGame = CodeBreaker()
             }label:{ Image(systemName: "plus") }
-                .sheet(isPresented: $showGameEditor){
+                .sheet(isPresented: $showGameEditor, onDismiss: {newGame = nil}){
                     if let newGame{
-                        GameEditor(showGameEditor: $showGameEditor, game: newGame)
+                        NavigationStack{
+                            GameEditor(showGameEditor: $showGameEditor, game: newGame)
+                                .toolbar{
+                                    ToolbarItem(placement: .cancellationAction){
+                                        Button{
+                                            self.newGame = nil
+                                        }label: {Text("Cancel")}
+                                    }
+                                    ToolbarItem(placement: .confirmationAction){
+                                        Button{
+                                            if Set(newGame.pegChoices).count < 2 || newGame.name.isEmpty{
+                                                showAlert = true
+                                            }
+                                            else{
+                                                withAnimation{
+                                                    games.insert(newGame, at: 0)
+                                                    self.newGame = nil
+                                                }
+                                            }
+                                        }label: { Text("Done") }
+                                            .alert("Note", isPresented: $showAlert){
+                                                Button("OK"){ showAlert = false }
+                                            }message:{
+                                                Text("You can only add a game with a name and minimum two unique pegs")
+                                            }
+
+                                    }
+                                }
+                        }
                     }
                 }
                 .onChange(of: newGame){
                     showGameEditor = newGame != nil // this line tells only change showGameEditor when new game is changed and not equal to nil
                 }
-        }
-        .onChange(of: showGameEditor){ oldValue, newValue in
-            if oldValue == true , newValue == false{
-                if let newGame{
-                    withAnimation{
-                        games.insert(newGame, at: 0)
-                    }
-                }
-                newGame = nil // setting back to nil
-            }
         }
         .listStyle(.automatic)
             .navigationTitle("CodeBreaker")

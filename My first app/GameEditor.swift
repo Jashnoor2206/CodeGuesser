@@ -11,25 +11,14 @@ struct GameEditor: View {
     @Binding var showGameEditor: Bool
     @Bindable var game: CodeBreaker
     var body: some View {
-        NavigationStack{
-            Form{
-                Section("Name"){
-                    TextField("Name", text: $game.name)
-                }
-                Section("Pegs"){
-                    GameEditorPegChooser(pegChoices: $game.pegChoices)
-                }
-            }.toolbar{
-                Button{ showGameEditor = false
-                }label: {
-                    HStack{
-                        Text("Add Peg Choice")
-                        Image(systemName: "plus.circle")
-                    }
-                }
+        Form{
+            Section("Name"){
+                TextField("Name", text: $game.name)
             }
-            
-        }
+            Section("Pegs"){
+                GameEditorPegChooser(pegChoices: $game.pegChoices)
+            }
+       }
     }
 }
 
