@@ -6,12 +6,13 @@
 //
 
 import SwiftUI
+import SwiftData
 
 @main
 struct My_first_appApp: App {
     var body: some Scene {
         WindowGroup {
             GameChooser()
-        }
+        }.modelContainer(for: CodeBreaker.self)
     }
 }

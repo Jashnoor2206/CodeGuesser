@@ -6,11 +6,6 @@
 //
 import SwiftUI
 
-enum Match {
-    case nomatch
-    case exact
-    case inexact
-}
 struct Pins: View{
     // MARK: Data In
     var matches : [Match]

@@ -7,24 +7,55 @@
 
 
 import SwiftUI
+import SwiftData
 
-struct Code: Hashable{ // inside the code we have pegs of different color
-    var kind: Kind
-    var pegs: [Peg] = Array(repeating: Code.missingPeg, count: 4) // this will make intial guesser transparent 
+@Model class Code { // inside the code we have pegs of different color
+    var _kind: String = ""
+    var _pegs: [String] = []
+    
+    init(kind: Kind, pegs: [Peg] = Array(repeating: Code.missingPeg, count: 4)) {
+        self.kind = kind
+        self.pegs = pegs
+    }
+    
+    var pegs: [Peg]{
+        get {
+            _pegs.compactMap { Peg(string: $0) }
+        }
+        set {
+            _pegs = newValue.map { $0.toString }
+        }
+    }
     static var missingPeg: Peg = .clear
-    enum Kind: Hashable{
+    
+    enum Kind: Codable, Hashable{
         case masterCode (isHidden: Bool)
         case guess
         case attempts ([Match])
         case unknown
     }
     
-    mutating func randomize(from PegChoices: [Peg]){
+    var kind: Kind{
+        get{
+            guard let data = _kind.data(using: .utf8),
+                  let decoded = try? JSONDecoder().decode(Kind.self, from: data)
+            else { return .unknown }
+            return decoded
+        }
+        set{
+            if let data = try? JSONEncoder().encode(newValue),
+               let string = String(data: data, encoding: .utf8) {
+                _kind = string
+            }
+        }
+    }
+    
+    func randomize(from PegChoices: [Peg]){
         for index in pegs.indices{
             pegs[index] = PegChoices.randomElement() ?? Code.missingPeg
         }
         print(pegs)
-
+        
     }
     
     var isHidden: Bool{
@@ -63,4 +94,10 @@ struct Code: Hashable{ // inside the code we have pegs of different color
             }
         }
     }
+}
+
+enum Match : Codable, Hashable{
+    case nomatch
+    case exact
+    case inexact
 }

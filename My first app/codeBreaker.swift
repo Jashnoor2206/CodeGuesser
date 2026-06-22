@@ -6,28 +6,40 @@
 //
 
 import SwiftUI
+import SwiftData
 
 typealias Peg = Color // here essentially we make Peg an alias of color because for now pegs are just the colors , but since Color is the UI thing so we need to import swiftUI instead of Foundation
 
-@Observable class CodeBreaker {
+@Model class CodeBreaker {
     var name : String
-    var MasterCode: Code = Code(kind: .masterCode(isHidden: true))
-    var guess: Code = Code(kind: .guess)
-    var attempts: [Code] = [] // create an empty array for time being 
-    var pegChoices: [Peg] 
+    @Relationship(deleteRule: .cascade) var MasterCode: Code
+    @Relationship(deleteRule: .cascade) var guess: Code
+    @Relationship(deleteRule: .cascade) var attempts: [Code]
+    var _pegChoices: [String] = []
+
     init(name: String = "Untitled", pegChoices : [Peg] = [.red, .blue, .brown, .yellow]){
         self.name = name
-        self.pegChoices = pegChoices
+        self.MasterCode = Code(kind: .masterCode(isHidden: true))
+        self.guess = Code(kind: .guess)
+        self.attempts = []
         MasterCode.randomize(from: pegChoices)
         guess.pegs = Array(repeating: Color.clear, count: 4)
+        self.pegChoices = pegChoices
+    }
+    var pegChoices: [Peg]{
+        get {
+            _pegChoices.compactMap { Peg(string: $0) }
+        }
+        set {
+            _pegChoices = newValue.map { $0.toString }
+        }
     }
     var isOver: Bool{
         attempts.first?.pegs == MasterCode.pegs
     }
     func attemptGuess(){
         guard !attempts.contains(where: { $0.pegs == guess.pegs}) else {return}
-        var attempt = guess
-        attempt.kind = .attempts(guess.match(against: MasterCode))
+        let attempt = Code(kind: .attempts(guess.match(against: MasterCode)), pegs: guess.pegs)
         attempts.insert(attempt, at: 0) // insert element at the begining
         if isOver{
             MasterCode.kind = .masterCode(isHidden: false)
@@ -48,7 +60,7 @@ typealias Peg = Color // here essentially we make Peg an alias of color because 
     
 }
 
-extension CodeBreaker: Identifiable, Hashable{
+nonisolated extension CodeBreaker: Identifiable, Hashable{
     static func == (lhs: CodeBreaker, rhs: CodeBreaker) -> Bool{
         return lhs.id == rhs.id
     }
