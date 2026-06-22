@@ -9,11 +9,12 @@ import SwiftUI
 
 struct Pegchooser: View {
     @Binding var selection: Int
+    let isOver: Bool
     let game: CodeBreaker
     let attemptsNumber: Int
     var body: some View {
         HStack{
-            if !game.isOver{
+            if !isOver{
                 if attemptsNumber >= 5{
                     Text("You have exhausted all your attempts")
                         .font(.largeTitle)

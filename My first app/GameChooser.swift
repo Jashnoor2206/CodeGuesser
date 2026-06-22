@@ -4,7 +4,7 @@
 //
 //  Created by Jashnoor Singh on 16/06/26.
 //
-
+import SwiftData
 import SwiftUI
 
 struct GameChooser: View {
@@ -29,4 +29,5 @@ struct GameChooser: View {
 
 #Preview {
     GameChooser()
+        .modelContainer(for: CodeBreaker.self, inMemory: true)
 }

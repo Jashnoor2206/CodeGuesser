@@ -62,6 +62,3 @@ struct CodeView<SideView>: View where SideView: View {
         }
     }
 
-//#Preview {
-//    CodeView(code)
-//}

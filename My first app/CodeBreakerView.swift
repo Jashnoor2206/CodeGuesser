@@ -15,6 +15,7 @@ struct CodeBreakerView: View {
 
     // MARK: Data owned by me
     @State private var attemptsNumber: Int = 0
+    @State private var isOver: Bool = false
     @State private var selection: Int = 0
     @State private var restarting: Bool = false
     @State private var PinsHidden: Bool = false
@@ -24,7 +25,7 @@ struct CodeBreakerView: View {
         VStack{ // now for the vstack we will have a mastercode and a guess code
             CodeView(code: game.MasterCode){restartButton}// master Code
             ScrollView{
-                    if !game.isOver{
+                    if !isOver{
                         CodeView(code: game.guess, selection: $selection){guessButton} // guess code
                             .opacity(restarting ? 0 : 1)
                     }
@@ -37,29 +38,37 @@ struct CodeBreakerView: View {
                         }
                     }.transition(.attempts(game.isOver))
                 }
-            Pegchooser(selection: $selection, game: game, attemptsNumber: attemptsNumber)
+            Pegchooser(selection: $selection, isOver: isOver, game: game, attemptsNumber: attemptsNumber)
                 .frame(maxHeight: 150)
         }.padding()
     }
     
-    var guessButton: some View{
+    var guessButton: some View {
         Button("Guess"){
             withAnimation(.guess){
-                PinsHidden = true
-                game.attemptGuess()
-                selection = 0
-                game.guess.pegs = Array(repeating: Color.clear, count: 4)
-                attemptsNumber = attemptsNumber + 1
-            }completion: {
-                withAnimation(.guess){ PinsHidden = false }
+            PinsHidden = true
+            game.attemptGuess()
+            isOver = game.isOver
+            } completion: {
+                withAnimation(.guess){
+                    selection = 0
+                    attemptsNumber += 1
+                }completion: {
+                    withAnimation(.guess){
+                        game.guess.pegs = Array(repeating: Color.clear, count: 4)
+                        PinsHidden = false
+                    }
+                }
             }
-        }.font(.system(size: 80))
-         .minimumScaleFactor(0.1)
+        }
+        .font(.system(size: 80))
+        .minimumScaleFactor(0.1)
     }
     
     var restartButton: some View{
             Button("Restart"){
                 withAnimation(.restart){
+                    isOver = false
                     restarting = game.isOver
                     game.restart()
                     selection = 0

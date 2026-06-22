@@ -9,7 +9,7 @@ import SwiftUI
 import SwiftData
 
 struct GameList: View {
-    @Query private var games: [CodeBreaker]
+    @Query(sort: \CodeBreaker.createdDate, order: .reverse) private var games: [CodeBreaker]
     @Environment(\.modelContext) private var modelContext
     @State private var showAlert: Bool = false
     @State private var showGameEditor: Bool = false
@@ -28,15 +28,20 @@ struct GameList: View {
                             .font(.title3)
                     }
                 }
+                .swipeActions(edge: .leading){
+                    Button{
+                        newGame = game
+                        showGameEditor = true
+                    }label:{
+                        Label("Edit", systemImage: "pencil")
+                    }.tint(.blue)
+                }
             }
             .onDelete{ offset in // allows swipe to delete
                 for index in offset{
                     modelContext.delete(games[index])
                 }
             }
-//            .onMove{ startingIndex, destinationIndex in // allows to hold to move
-//                games.move(fromOffsets: startingIndex, toOffset: destinationIndex)
-//            }
         }.toolbar{
             Button{ newGame = CodeBreaker()
             }label:{ Image(systemName: "plus") }
@@ -95,5 +100,6 @@ struct GameList: View {
     @Previewable @State var selection : CodeBreaker?
     NavigationStack{
         GameList(selection: $selection)
+            .modelContainer(for: CodeBreaker.self, inMemory: true)
     }
 }

@@ -54,7 +54,7 @@ import SwiftData
         for index in pegs.indices{
             pegs[index] = PegChoices.randomElement() ?? Code.missingPeg
         }
-        print(pegs)
+        print(pegs.map{$0.debugName})
         
     }
     
@@ -76,7 +76,7 @@ import SwiftData
     func match(against otherCode: Code) -> [Match]{
         var pegstoMatch = otherCode.pegs
         let backward_exactMatches = pegstoMatch.indices.reversed().map{ index in
-            if pegstoMatch.count > index, pegstoMatch[index] == pegs[index]{
+            if pegstoMatch.count > index, pegstoMatch[index].isApproximately(pegs[index]){
                 pegstoMatch.remove(at: index)
                 return Match.exact
             }
@@ -85,7 +85,7 @@ import SwiftData
         let exactMatches = Array(backward_exactMatches.reversed())
         
         return pegs.indices.map{ index in
-            if exactMatches[index] != .exact ,let matchIndex = pegstoMatch.firstIndex(of: pegs[index]){
+            if exactMatches[index] != .exact, let matchIndex = pegstoMatch.firstIndex(where: { $0.isApproximately(pegs[index]) }){
                 pegstoMatch.remove(at: matchIndex)
                 return .inexact
             }

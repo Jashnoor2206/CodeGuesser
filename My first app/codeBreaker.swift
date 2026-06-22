@@ -12,6 +12,7 @@ typealias Peg = Color // here essentially we make Peg an alias of color because 
 
 @Model class CodeBreaker {
     var name : String
+    var createdDate: Date = Date()
     @Relationship(deleteRule: .cascade) var MasterCode: Code
     @Relationship(deleteRule: .cascade) var guess: Code
     @Relationship(deleteRule: .cascade) var attempts: [Code]
@@ -19,6 +20,7 @@ typealias Peg = Color // here essentially we make Peg an alias of color because 
 
     init(name: String = "Untitled", pegChoices : [Peg] = [.red, .blue, .brown, .yellow]){
         self.name = name
+        self.createdDate = Date()
         self.MasterCode = Code(kind: .masterCode(isHidden: true))
         self.guess = Code(kind: .guess)
         self.attempts = []
@@ -26,6 +28,7 @@ typealias Peg = Color // here essentially we make Peg an alias of color because 
         guess.pegs = Array(repeating: Color.clear, count: 4)
         self.pegChoices = pegChoices
     }
+    
     var pegChoices: [Peg]{
         get {
             _pegChoices.compactMap { Peg(string: $0) }
@@ -34,11 +37,13 @@ typealias Peg = Color // here essentially we make Peg an alias of color because 
             _pegChoices = newValue.map { $0.toString }
         }
     }
+    
     var isOver: Bool{
-        attempts.first?.pegs == MasterCode.pegs
+        attempts.first?.pegs.isApproximately(MasterCode.pegs) ?? false
     }
+    
     func attemptGuess(){
-        guard !attempts.contains(where: { $0.pegs == guess.pegs}) else {return}
+        guard !attempts.contains(where: { $0.pegs.isApproximately(guess.pegs) }) else { return }
         let attempt = Code(kind: .attempts(guess.match(against: MasterCode)), pegs: guess.pegs)
         attempts.insert(attempt, at: 0) // insert element at the begining
         if isOver{
