@@ -65,13 +65,4 @@ typealias Peg = Color // here essentially we make Peg an alias of color because 
     
 }
 
-nonisolated extension CodeBreaker: Identifiable, Hashable{
-    static func == (lhs: CodeBreaker, rhs: CodeBreaker) -> Bool{
-        return lhs.id == rhs.id
-    }
-    func hash(into hasher: inout Hasher){
-        hasher.combine(id)
-    }
-}
-
 

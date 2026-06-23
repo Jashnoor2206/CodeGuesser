@@ -18,8 +18,7 @@ extension Color {
         return "\(r),\(g),\(b),\(a)"
     }
 
-    /// Rebuilds a Color from a string previously produced by `toString`.
-    /// Returns nil if the string doesn't match the expected format.
+
     init?(string: String) {
         let parts = string.split(separator: ",").compactMap { Double($0) }
         guard parts.count == 4 else { return nil }
